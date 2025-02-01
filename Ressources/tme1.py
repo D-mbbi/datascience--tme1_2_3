@@ -30,10 +30,7 @@ spes=lectureSpe("PrefSpe.txt")
 
 """
 
-def GaleShapleyEtu(etu_pref : list,spe_pref : tuple):
-    spe_pref,capacites=spe_pref[0], spe_pref[1]
-    
-    
+def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
     for i in range(len(etu_pref)):                          # Conversion en int du contenu des matrices de preferences
         for j in range(len(etu_pref[i])):
             etu_pref[i][j] = int(etu_pref[i][j])
@@ -91,4 +88,4 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : tuple):
 
     return affectations
 
-print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyEtu(etus,spes))
+print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyEtu(etus,spes[0],spes[1]))
