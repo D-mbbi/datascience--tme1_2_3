@@ -1,2 +1,2 @@
-# datascience--tme1_2_3
+# ia_jeux--tme1_2_3
 Projet Data Science
