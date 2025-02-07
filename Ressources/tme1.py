@@ -26,9 +26,6 @@ def lectureSpe(s):
 etus=lectureEtu("PrefEtu.txt")
 spes=lectureSpe("PrefSpe.txt")
 
-"""
-
-"""
 
 def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
     for i in range(len(etu_pref)):                          # Conversion en int du contenu des matrices de preferences
@@ -58,7 +55,7 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
         for prc in (preferences_etu_courant):          # prc = parcours courant, on va chercher le premier parcours parmi les preférés de l'etudiant,
                                                        # à qui il n'a pas fait de propositions
             if prc not in propositions[etu]:
-                capacites[prc]=int(capacites[prc])      # conversion en int pour éviter les érreurs
+                capacites[prc]=int(capacites[prc])      # conversion en int pour éviter les erreurs
                 if capacites[prc] > 0:              # s'il reste de la place dans le parcours on ajoute l'étudiant
                     affectations[prc].add(etu)
                     capacites[prc]-=1
@@ -89,3 +86,59 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
     return affectations
 
 print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyEtu(etus,spes[0],spes[1]))
+
+def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
+    for i in range(len(etu_pref)):          # Conversion en int du contenu des matrices de preferences
+        for j in range(len(etu_pref[i])):
+            etu_pref[i][j] = int(etu_pref[i][j])
+    for i in range(len(spe_pref)):
+        for j in range(len(spe_pref[i])):
+            spe_pref[i][j] = int(spe_pref[i][j])
+    
+    
+    spe_libres=set()    #set qui contiendra les ID des parcours libres
+    for i in range(len(spe_pref)):
+        spe_libres.add(i)
+    
+    affectations=dict()     #dictionnaire des affectations parcours -> {étudiants} qui sera retourné
+    for i in range(len(spe_pref)):
+        affectations[i] = set()
+    
+    propositions=dict()     #utilisé pour voir les propositions qu'ont fait les étudiants
+    for i in range(len(spe_pref)):
+        propositions[i] = set()
+    
+    while spe_libres:
+        prc=spe_libres.pop()
+        preferences_spe_courant=spe_pref[prc]
+        married=False 
+        while capacites[prc]>0:
+            for etu in (preferences_spe_courant):
+                
+                if etu not in propositions[prc]:
+                    capacites[prc]=int(capacites[prc])
+                    affectations[prc].add(etu)
+                    capacites[prc]-=1
+                    married = True
+                    
+                else:
+
+                    etu_moins_pref=affectations[prc].pop()     
+                    for etu_aff in affectations[prc]:
+                        if spe_pref[prc].index(etu_aff)>spe_pref[prc].index(etu_moins_pref):
+                            etu_moins_pref = etu_aff
+
+                    if(spe_pref[prc].index(etu_moins_pref)>spe_pref[prc].index(etu)):
+                        etu_libres.add(etu_moins_pref)
+                        affectations[prc].add(etu)
+                        married = True
+                        break
+                    affectations[prc].add(etu_moins_pref)
+
+                propositions[prc].add(etu) # maj des propositions faites par les parcours
+                break
+            if not married: spe_libres.add(prc) # si le parcours n'a pas obtenu d'affectation, il retourne dans la file d'attente
+
+    return affectations
+
+print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyPrc(etus,spes[0],spes[1]))
