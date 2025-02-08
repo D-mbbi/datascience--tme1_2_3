@@ -85,9 +85,12 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
 
     return affectations
 
-print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyEtu(etus,spes[0],spes[1]))
+affectations_etu=GaleShapleyEtu(etus,spes[0],spes[1])
+print("\n\nAffectation obtenue (Parcours: {Etudiants}): ",affectations_etu)
 
-"""def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
+"""FONCTION NE MARCHE PAS: A REVOIR
+    RENVOIE DES SETS VIDES"""
+def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
     for i in range(len(etu_pref)):          # Conversion en int du contenu des matrices de preferences
         for j in range(len(etu_pref[i])):
             etu_pref[i][j] = int(etu_pref[i][j])
@@ -129,7 +132,7 @@ print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyEtu(etus,s
                             etu_moins_pref = etu_aff
 
                     if(spe_pref[prc].index(etu_moins_pref)>spe_pref[prc].index(etu)):
-                        etu_libres.add(etu_moins_pref)
+                        spe_libres.add(prc)
                         affectations[prc].add(etu)
                         married = True
                         break
@@ -142,4 +145,24 @@ print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyEtu(etus,s
     return affectations
 
 print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyPrc(etus,spes[0],spes[1]))
-"""
+
+def verifier_stabilite(affectations, etu_pref, spe_pref):
+    paires_instables = []    
+    for spe, etus in affectations.items():
+        for etu in etus:
+            for meilleur_spe in etu_pref[etu]:
+                if meilleur_spe == spe:
+                    break  # L'étudiant est satisfait
+                
+                else:
+                    etus_du_parcours = affectations[meilleur_spe]
+                    
+                    for etu_moins_pref in etus_du_parcours:
+                        if spe_pref[meilleur_spe].index(etu) < spe_pref[meilleur_spe].index(etu_moins_pref):
+                            paires_instables.append((etu, meilleur_spe))
+                            break
+    
+    return paires_instables
+
+paires_instables = verifier_stabilite(affectations_etu, etus, spes[0])
+print("Paires instables: ", paires_instables)
