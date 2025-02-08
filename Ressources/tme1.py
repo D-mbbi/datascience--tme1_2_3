@@ -87,7 +87,7 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
 
 print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyEtu(etus,spes[0],spes[1]))
 
-def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
+"""def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
     for i in range(len(etu_pref)):          # Conversion en int du contenu des matrices de preferences
         for j in range(len(etu_pref[i])):
             etu_pref[i][j] = int(etu_pref[i][j])
@@ -142,3 +142,4 @@ def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
     return affectations
 
 print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyPrc(etus,spes[0],spes[1]))
+"""
