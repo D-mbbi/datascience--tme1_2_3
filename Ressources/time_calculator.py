@@ -1,6 +1,7 @@
 import tme1
 import random
 import time
+import matplotlib.pyplot as plt
 from statistics import mean
 
 
@@ -44,4 +45,9 @@ def time_calculator():
     return temps_par_n
 
 
-print(time_calculator())
+nb_etudiants = [_ for _ in range(200,2001,200)]
+temps_moyen = time_calculator()
+plt.plot(nb_etudiants,temps_moyen)
+plt.xlabel("Nombre d'étudiants")
+plt.ylabel("Temps moyen d'éxécution (en s)")
+plt.show()
