@@ -27,7 +27,7 @@ def generate_integer_list_v2(n, total):
 
     return numbers
 
-def time_calculator():
+def time_calculator_etu():
     print("Chargement...")
     temps_par_n = []
     for i in range(200,2001,200):
@@ -44,10 +44,35 @@ def time_calculator():
         temps_par_n.append(mean(temps))
     return temps_par_n
 
+def time_calculator_prc():
+    print("Chargement...")
+    temps_par_n = []
+    for i in range(200,2001,200):
+        cE = matrice_cE(i)
+        cP = matrice_cP(i)
+        capacites = generate_integer_list_v2(9,i)
+        temps=[]
+        for k in range(10):
+            start = time.time()
+            tme1.GaleShapleyPrc(cE,cP,capacites.copy())
+            end = time.time()
+            
+            temps.append(end-start)
+        temps_par_n.append(mean(temps))
+    return temps_par_n
+
 
 nb_etudiants = [_ for _ in range(200,2001,200)]
-temps_moyen = time_calculator()
-plt.plot(nb_etudiants,temps_moyen)
+temps_moyen_GS_etu = time_calculator_etu()
+plt.plot(nb_etudiants,temps_moyen_GS_etu)
+plt.title("Gale Shapley coté étudiants")
+plt.xlabel("Nombre d'étudiants")
+plt.ylabel("Temps moyen d'éxécution (en s)")
+plt.show()
+
+temps_moyen_GS_prc = time_calculator_prc()
+plt.plot(nb_etudiants,temps_moyen_GS_prc)
+plt.title("Gale Shapley coté parcours")
 plt.xlabel("Nombre d'étudiants")
 plt.ylabel("Temps moyen d'éxécution (en s)")
 plt.show()
