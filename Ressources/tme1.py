@@ -85,11 +85,10 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
 
     return affectations
 
-affectations_etu=GaleShapleyEtu(etus,spes[0],spes[1])
-print("\n\nAffectation obtenue (Parcours: {Etudiants}): ",affectations_etu)
+affectations_etu=GaleShapleyEtu(etus,spes[0],spes[1].copy())
+print("\n##### Affectation obtenue (Parcours: {Etudiants}) avec le coté étudiants: ",affectations_etu,"\n")
 
-"""FONCTION NE MARCHE PAS: A REVOIR
-    RENVOIE DES SETS VIDES"""
+
 def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
     for i in range(len(etu_pref)):          # Conversion en int du contenu des matrices de preferences
         for j in range(len(etu_pref[i])):
@@ -103,11 +102,15 @@ def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
     for i in range(len(spe_pref)):
         spe_libres.add(i)
     
+    etu_libres=set()    #set qui contiendra les ID des étudiants libres
+    for i in range(len(etu_pref)):
+        etu_libres.add(i)
+    
     affectations=dict()     #dictionnaire des affectations parcours -> {étudiants} qui sera retourné
     for i in range(len(spe_pref)):
         affectations[i] = set()
     
-    propositions=dict()     #utilisé pour voir les propositions qu'ont fait les étudiants
+    propositions=dict()     #utilisé pour voir les propositions qu'ont fait les parcours
     for i in range(len(spe_pref)):
         propositions[i] = set()
     
@@ -115,36 +118,37 @@ def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
         prc=spe_libres.pop()
         preferences_spe_courant=spe_pref[prc]
         married=False 
+        capacites[prc]=int(capacites[prc])
         while capacites[prc]>0:
             for etu in (preferences_spe_courant):
                 
                 if etu not in propositions[prc]:
-                    capacites[prc]=int(capacites[prc])
-                    affectations[prc].add(etu)
-                    capacites[prc]-=1
-                    married = True
-                    
-                else:
-
-                    etu_moins_pref=affectations[prc].pop()     
-                    for etu_aff in affectations[prc]:
-                        if spe_pref[prc].index(etu_aff)>spe_pref[prc].index(etu_moins_pref):
-                            etu_moins_pref = etu_aff
-
-                    if(spe_pref[prc].index(etu_moins_pref)>spe_pref[prc].index(etu)):
-                        spe_libres.add(prc)
+                    propositions[prc].add(etu) # maj des propositions faites par les parcours
+                    if etu in etu_libres:
                         affectations[prc].add(etu)
-                        married = True
+                        capacites[prc]-=1
+                        etu_libres.remove(etu)
                         break
-                    affectations[prc].add(etu_moins_pref)
+                    
+                    else:
+                        #Recherche du parcours dans lequel se situe l'étudiant etu
+                        prc_aff = -1
+                        for aff in affectations.items():
+                            if etu in aff[1]: 
+                                prc_aff = aff[0]
+                                break
+                        if(etu_pref[etu].index(prc) < etu_pref[etu].index(prc_aff)):
+                            affectations[prc_aff].remove(etu)
+                            capacites[prc_aff] += 1
+                            spe_libres.add(prc_aff)
+                            affectations[prc].add(etu)
+                            capacites[prc] -= 1
+                            break
 
-                propositions[prc].add(etu) # maj des propositions faites par les parcours
-                break
-            if not married: spe_libres.add(prc) # si le parcours n'a pas obtenu d'affectation, il retourne dans la file d'attente
-
+                    
     return affectations
 
-print("\n\nAffectation obtenue (Parcours: {Etudiants}): ", GaleShapleyPrc(etus,spes[0],spes[1]))
+print("\n##### Affectation obtenue (Parcours: {Etudiants}) avec le coté parcours: ", GaleShapleyPrc(etus,spes[0],spes[1].copy()),"\n")
 
 def verifier_stabilite(affectations, etu_pref, spe_pref):
     paires_instables = []    
