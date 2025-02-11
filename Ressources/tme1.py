@@ -23,8 +23,6 @@ def lectureSpe(s):
     return (res1,res2)
 
 
-etus=lectureEtu("PrefEtu.txt")
-spes=lectureSpe("PrefSpe.txt")
 
 
 def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
@@ -85,8 +83,6 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
 
     return affectations
 
-affectations_etu=GaleShapleyEtu(etus,spes[0],spes[1].copy())
-print("\n##### Affectation obtenue (Parcours: {Etudiants}) avec le coté étudiants: ",affectations_etu,"\n")
 
 
 def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
@@ -148,7 +144,7 @@ def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
                     
     return affectations
 
-print("\n##### Affectation obtenue (Parcours: {Etudiants}) avec le coté parcours: ", GaleShapleyPrc(etus,spes[0],spes[1].copy()),"\n")
+
 
 def verifier_stabilite(affectations, etu_pref, spe_pref):
     paires_instables = []    
@@ -168,5 +164,3 @@ def verifier_stabilite(affectations, etu_pref, spe_pref):
     
     return paires_instables
 
-paires_instables = verifier_stabilite(affectations_etu, etus, spes[0])
-print("Paires instables: ", paires_instables)
