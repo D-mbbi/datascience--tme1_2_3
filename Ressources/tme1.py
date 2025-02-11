@@ -26,6 +26,7 @@ def lectureSpe(s):
 
 
 def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
+    iterations = 0
     for i in range(len(etu_pref)):                          # Conversion en int du contenu des matrices de preferences
         for j in range(len(etu_pref[i])):
             etu_pref[i][j] = int(etu_pref[i][j])
@@ -50,8 +51,9 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
         etu=etu_libres.pop()    # index de l'etudiant courant
         preferences_etu_courant=etu_pref[etu]
         married = False         # variable indiquant si l'etudiant a ete affecté à l'issue de l'algo
+        iterations += 1
         for prc in (preferences_etu_courant):          # prc = parcours courant, on va chercher le premier parcours parmi les preférés de l'etudiant,
-                                                       # à qui il n'a pas fait de propositions
+                                                       # à qui il n'a pas fait de propositions 
             if prc not in propositions[etu]:
                 capacites[prc]=int(capacites[prc])      # conversion en int pour éviter les erreurs
                 if capacites[prc] > 0:              # s'il reste de la place dans le parcours on ajoute l'étudiant
@@ -81,11 +83,12 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
 
         if not married: etu_libres.add(etu) # si l'étudiant n'a pas obtenu d'affectation, il retourne dans la file d'attente
 
-    return affectations
+    return affectations,iterations
 
 
 
 def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
+    iterations = 0
     for i in range(len(etu_pref)):          # Conversion en int du contenu des matrices de preferences
         for j in range(len(etu_pref[i])):
             etu_pref[i][j] = int(etu_pref[i][j])
@@ -115,9 +118,10 @@ def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
         preferences_spe_courant=spe_pref[prc]
         married=False 
         capacites[prc]=int(capacites[prc])
+        iterations += 1
+
         while capacites[prc]>0:
             for etu in (preferences_spe_courant):
-                
                 if etu not in propositions[prc]:
                     propositions[prc].add(etu) # maj des propositions faites par les parcours
                     if etu in etu_libres:
@@ -142,7 +146,7 @@ def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
                             break
 
                     
-    return affectations
+    return affectations,iterations
 
 
 

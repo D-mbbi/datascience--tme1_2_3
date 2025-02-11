@@ -29,35 +29,45 @@ def generate_integer_list_v2(n, total):
 def time_calculator_etu():
     print("Chargement...")
     temps_par_n = []
+    iterations_par_n = []
     for i in range(200,2001,200):
         cE = matrice_cE(i)
         cP = matrice_cP(i)
         capacites = generate_integer_list_v2(9,i)
         temps=[]
+        iterations = []
+
         for k in range(10):
             start = time.time()
-            tme1.GaleShapleyEtu(cE,cP,capacites.copy())
+            _,iter_count=tme1.GaleShapleyEtu(cE,cP,capacites.copy())
             end = time.time()
             
             temps.append(end-start)
+            iterations.append(iter_count)
+
         temps_par_n.append(mean(temps))
-    return temps_par_n
+        iterations_par_n.append(mean(iterations))
+    return temps_par_n,iterations_par_n
 
 
 def time_calculator_prc():
     print("Chargement...")
     temps_par_n = []
+    iterations_par_n = []
     for i in range(200,2001,200):
         cE = matrice_cE(i)
         cP = matrice_cP(i)
         capacites = generate_integer_list_v2(9,i)
         temps=[]
+        iterations = []
         for k in range(10):
             start = time.time()
-            tme1.GaleShapleyPrc(cE,cP,capacites.copy())
+            _,iter_count=tme1.GaleShapleyPrc(cE,cP,capacites.copy())
             end = time.time()
             
             temps.append(end-start)
+            iterations.append(iter_count)
         temps_par_n.append(mean(temps))
-    return temps_par_n
+        iterations_par_n.append(mean(iterations))
+    return temps_par_n,iterations_par_n
 
