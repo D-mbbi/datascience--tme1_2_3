@@ -16,4 +16,17 @@ paires_instables_prc = verifier_stabilite(affectations_prc, etus, spes[0])
 print("Paires instables étudiants: ", paires_instables_etu)
 print("Paires instables parcours: ", paires_instables_prc)
 
-print(time_calculator())
+nb_etudiants = [_ for _ in range(200,2001,200)]
+temps_moyen_GS_etu = time_calculator_etu()
+plt.plot(nb_etudiants,temps_moyen_GS_etu)
+plt.title("Gale Shapley coté étudiants")
+plt.xlabel("Nombre d'étudiants")
+plt.ylabel("Temps moyen d'éxécution (en s)")
+plt.show()
+
+temps_moyen_GS_prc = time_calculator_prc()
+plt.plot(nb_etudiants,temps_moyen_GS_prc)
+plt.title("Gale Shapley coté parcours")
+plt.xlabel("Nombre d'étudiants")
+plt.ylabel("Temps moyen d'éxécution (en s)")
+plt.show()

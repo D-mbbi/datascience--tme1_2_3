@@ -2,7 +2,7 @@ import tme1
 import random
 import time
 from statistics import mean
-
+import matplotlib.pyplot as plt
 
 def matrice_cE(n):
     cE = []
@@ -26,7 +26,7 @@ def generate_integer_list_v2(n, total):
 
     return numbers
 
-def time_calculator():
+def time_calculator_etu():
     print("Chargement...")
     temps_par_n = []
     for i in range(200,2001,200):
@@ -44,4 +44,20 @@ def time_calculator():
     return temps_par_n
 
 
+def time_calculator_prc():
+    print("Chargement...")
+    temps_par_n = []
+    for i in range(200,2001,200):
+        cE = matrice_cE(i)
+        cP = matrice_cP(i)
+        capacites = generate_integer_list_v2(9,i)
+        temps=[]
+        for k in range(10):
+            start = time.time()
+            tme1.GaleShapleyPrc(cE,cP,capacites.copy())
+            end = time.time()
+            
+            temps.append(end-start)
+        temps_par_n.append(mean(temps))
+    return temps_par_n
 
