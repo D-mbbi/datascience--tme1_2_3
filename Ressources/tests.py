@@ -23,7 +23,7 @@ iterations_GS_etu = []
 iterations_GS_prc = []
 temps_moyen_GS_etu,iterations_GS_etu= time_calculator_etu()
 temps_moyen_GS_prc,iterations_GS_prc = time_calculator_prc()
-
+"""
 plt.figure(figsize=(10, 6))
 plt.plot(nb_etudiants,temps_moyen_GS_etu,label="Gale Shapley coté étudiants",color='b')
 plt.plot(nb_etudiants,temps_moyen_GS_prc,label="Gale Shapley coté parcours",color='r')
@@ -31,7 +31,7 @@ plt.legend()
 plt.title("Temps d'exécution de l'algorithme de Gale-Shapley en fonction du nombre d'étudiants")
 plt.xlabel("Nombre d'étudiants")
 plt.ylabel("Temps moyen d'exécution (en s)")
-plt.savefig("GaleShapleyTime.png")
+plt.savefig("GaleShapleyEtuTime.png")
 plt.show()
 
 plt.figure(figsize=(10, 6))
@@ -49,3 +49,8 @@ plt.xlabel("Nombre d'étudiants")
 plt.ylabel("Nombre d'itérations")
 plt.savefig("GaleShapleyPrcIterations.png")
 plt.show()
+"""
+#PLNE
+
+generer_fichier_lp(etus,spes[1], k=5)
+generer_lp_max_utilite(etus, spes, spes[1])

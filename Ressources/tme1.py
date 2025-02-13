@@ -164,7 +164,7 @@ def verifier_stabilite(affectations, etu_pref, spe_pref):
         for etu in etus:
             for meilleur_spe in etu_pref[etu]:
                 if meilleur_spe == spe:
-                    break  # L'étudiant est satisfait
+                    break  #l'étudiant est satisfait
                 
                 else:
                     etus_du_parcours = affectations[meilleur_spe]
@@ -176,29 +176,64 @@ def verifier_stabilite(affectations, etu_pref, spe_pref):
     
     return paires_instables
 
-def generer_fichier_lp(n, capacites, cE, k, nom_fichier="affectation.lp"):
-    with open(nom_fichier, "w") as f:
+def generer_fichier_lp(pref_etu,capacites, k, output_file="affectation.lp"):
+    nb_etudiants=len(pref_etu)
+    nb_specialites=len(capacites)
+
+    with open(output_file, "w") as f:
         f.write("Maximize\n")
-        f.write("obj: 0\n")  # On ne maximise rien, on cherche juste une affectation faisable
-        
+        f.write("obj: 0\n")  #pas d'objectif particulier, on cherche juste une faisabilité
+    
         f.write("Subject To\n")
         
-        # Contrainte 1 : Chaque étudiant doit être affecté à un de ses k premiers choix
-        for i in range(n):
-            contraintes = " + ".join([f"x_{i}_{j}" for j in cE[i][:k]])
-            f.write(f"c_etudiant_{i}: {contraintes} = 1\n")
+        #Contrainte 1 : chaque étudiant est affecté à exactement une spécialité parmi ses k premiers choix
+        for i in range(nb_etudiants):
+            k_choix = pref_etu[i][:k]  # Les k premiers choix
+            f.write(f" c_Etu_{i}: " + " + ".join([f"x_{i}_{j}" for j in k_choix]) + " = 1\n")
 
-        # Contrainte 2 : Respect des capacités des parcours
-        for j in range(len(capacites)):
-            contraintes = " + ".join([f"x_{i}_{j}" for i in range(n) if j in cE[i][:k]])
-            if contraintes:
-                f.write(f"c_parcours_{j}: {contraintes} <= {capacites[j]}\n")
+        #Contrainte 2 : ne pas dépasser la capacité des spécialités
+        for j in range(nb_specialites):
+            f.write(f" c_Spe_{j}: " + " + ".join([f"x_{i}_{j}" for i in range(nb_etudiants) if j in pref_etu[i][:k]]) + f" <= {capacites[j]}\n")
 
+        #variables binaires
         f.write("Binary\n")
-        for i in range(n):
-            for j in cE[i][:k]:
+        for i in range(nb_etudiants):
+            for j in pref_etu[i][:k]:
                 f.write(f"x_{i}_{j}\n")
 
         f.write("End\n")
+    print(f"Fichier {output_file} généré.")
 
-    print(f"Fichier {nom_fichier} généré.")
+    
+
+def generer_lp_max_utilite(pref_etu, pref_spe, capacites, filename="max_utilite.lp"):
+    nb_etudiants = len(pref_etu)
+    nb_parcours = len(pref_spe[0]) 
+    
+    with open(filename, "w") as f:
+        f.write("Maximize\n")
+        f.write(" obj: " + " + ".join(
+            [f"{(nb_parcours - pref_etu[i][j])} x_{i}_{j}" for i in range(nb_etudiants) for j in range(nb_parcours)]
+        ) + "\n")
+
+        f.write("\nSubject To\n")
+        
+        # Chaque étudiant doit être affecté à un seul parcours
+        for i in range(nb_etudiants):
+            f.write(f" c1_{i}: " + " + ".join([f"x_{i}_{j}" for j in range(nb_parcours)]) + " = 1\n")
+
+        # Respect des capacités des parcours
+        for j in range(nb_parcours):
+            f.write(f" c2_{j}: " + " + ".join([f"x_{i}_{j}" for i in range(nb_etudiants)]) + f" <= {capacites[j]}\n")
+
+        f.write("\nBinary\n")
+        for i in range(nb_etudiants):
+            for j in range(nb_parcours):
+                f.write(f" x_{i}_{j}\n")
+
+        f.write("\nEnd\n")
+
+    print(f"Fichier {filename} généré.")
+
+
+
