@@ -47,6 +47,11 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
     for i in range(len(etu_pref)):
         propositions[i] = set()
     
+    prc_prefs=dict()      #dictionnaire pour stocker l'ordre de préférence des étudiants pour chaque parcours
+    for prc in range(len(spe_pref)):
+        prc_prefs[prc]={etu: pref for pref, etu in enumerate(spe_pref[prc])}
+
+
     while etu_libres:
         etu=etu_libres.pop()    # index de l'etudiant courant
         preferences_etu_courant=etu_pref[etu]
@@ -67,11 +72,11 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
                     ## Recherche du moins préféré ##
                     etu_moins_pref = affectations[prc].pop()     
                     for etu_aff in affectations[prc]:
-                        if spe_pref[prc].index(etu_aff)>spe_pref[prc].index(etu_moins_pref):
+                        if prc_prefs[prc][etu_aff]>prc_prefs[prc][etu_moins_pref]:  
                             etu_moins_pref = etu_aff
                     
                     ## On les compare ##
-                    if(spe_pref[prc].index(etu_moins_pref)>spe_pref[prc].index(etu)):
+                    if(prc_prefs[prc][etu_moins_pref]>prc_prefs[prc][etu]):
                         etu_libres.add(etu_moins_pref)
                         affectations[prc].add(etu)
                         married = True
@@ -171,3 +176,29 @@ def verifier_stabilite(affectations, etu_pref, spe_pref):
     
     return paires_instables
 
+def generer_fichier_lp(n, capacites, cE, k, nom_fichier="affectation.lp"):
+    with open(nom_fichier, "w") as f:
+        f.write("Maximize\n")
+        f.write("obj: 0\n")  # On ne maximise rien, on cherche juste une affectation faisable
+        
+        f.write("Subject To\n")
+        
+        # Contrainte 1 : Chaque étudiant doit être affecté à un de ses k premiers choix
+        for i in range(n):
+            contraintes = " + ".join([f"x_{i}_{j}" for j in cE[i][:k]])
+            f.write(f"c_etudiant_{i}: {contraintes} = 1\n")
+
+        # Contrainte 2 : Respect des capacités des parcours
+        for j in range(len(capacites)):
+            contraintes = " + ".join([f"x_{i}_{j}" for i in range(n) if j in cE[i][:k]])
+            if contraintes:
+                f.write(f"c_parcours_{j}: {contraintes} <= {capacites[j]}\n")
+
+        f.write("Binary\n")
+        for i in range(n):
+            for j in cE[i][:k]:
+                f.write(f"x_{i}_{j}\n")
+
+        f.write("End\n")
+
+    print(f"Fichier {nom_fichier} généré.")
