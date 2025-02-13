@@ -51,15 +51,16 @@ def GaleShapleyEtu(etu_pref : list,spe_pref : list, capacites : list):
         etu=etu_libres.pop()    # index de l'etudiant courant
         preferences_etu_courant=etu_pref[etu]
         married = False         # variable indiquant si l'etudiant a ete affecté à l'issue de l'algo
-        iterations += 1
         for prc in (preferences_etu_courant):          # prc = parcours courant, on va chercher le premier parcours parmi les preférés de l'etudiant,
                                                        # à qui il n'a pas fait de propositions 
+            iterations += 1
             if prc not in propositions[etu]:
                 capacites[prc]=int(capacites[prc])      # conversion en int pour éviter les erreurs
                 if capacites[prc] > 0:              # s'il reste de la place dans le parcours on ajoute l'étudiant
                     affectations[prc].add(etu)
                     capacites[prc]-=1
                     married = True
+                    
                     break
                 else:                                               #sinon si le parcours préfère cet étudiant plutot que l'étudiant qu'il préfère le moins
                                                                     #parmi ceux qui lui sont affectés, ce dernier est remplacé :'(
@@ -118,10 +119,12 @@ def GaleShapleyPrc(etu_pref : list,spe_pref : list, capacites : list):
         preferences_spe_courant=spe_pref[prc]
         married=False 
         capacites[prc]=int(capacites[prc])
-        iterations += 1
 
         while capacites[prc]>0:
+            
+
             for etu in (preferences_spe_courant):
+                iterations += 1
                 if etu not in propositions[prc]:
                     propositions[prc].add(etu) # maj des propositions faites par les parcours
                     if etu in etu_libres:
